@@ -1,15 +1,13 @@
 ﻿namespace Core.DataAccess.Installers
 {
     using global::Autofac;
-    using Core.Autofac;
     using Core.DataAccess.Contracts;
 
-    public class DataOperationHandlerInstaller : IAutofacBuilderExtension
+    public class DataOperationHandlerInstaller : Module
     {
-        public ContainerBuilder AddRegistrations(ContainerBuilder containerBuilder)
+        protected override void Load(ContainerBuilder builder)
         {
-            containerBuilder.RegisterGeneric(typeof(DataOperationHandler<>)).As(typeof(IDataOperationHandler<>)).InstancePerLifetimeScope();
-            return containerBuilder;
+            builder.RegisterGeneric(typeof(DataOperationHandler<>)).As(typeof(IDataOperationHandler<>)).InstancePerLifetimeScope();
         }
     }
 }
