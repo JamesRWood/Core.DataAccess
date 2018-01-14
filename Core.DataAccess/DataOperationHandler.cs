@@ -6,11 +6,11 @@
 
     public class DataOperationHandler<TRequest> : IDataOperationHandler<TRequest> where TRequest : IRequest
     {
-        private readonly IContainer _container;
+        private readonly IComponentContext _context;
 
-        public DataOperationHandler(IContainer container)
+        public DataOperationHandler(IComponentContext context)
         {
-            _container = container;
+            _context = context;
         }
 
         public void ExecuteCommand<TCommandRequest>(TCommandRequest request) where TCommandRequest : ICommandRequest
@@ -21,7 +21,7 @@
             }
 
             var commandHandlerType = typeof(IDataOperation<>).MakeGenericType(request.GetType());
-            dynamic commandHandler = _container.Resolve(commandHandlerType);
+            dynamic commandHandler = _context.Resolve(commandHandlerType);
             commandHandler.Execute((dynamic)request);
         }
 
@@ -33,7 +33,7 @@
             }
 
             var queryHandlerType = typeof(IDataOperation<,>).MakeGenericType(request.GetType(), typeof(TResponse));
-            dynamic queryHandler = _container.Resolve(queryHandlerType);
+            dynamic queryHandler = _context.Resolve(queryHandlerType);
             return queryHandler.Execute((dynamic)request);
         }
     }

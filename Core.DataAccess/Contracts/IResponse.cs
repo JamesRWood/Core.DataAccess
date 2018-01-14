@@ -1,6 +1,6 @@
 ﻿namespace Core.DataAccess.Contracts
 {
-    public interface IResponse
+    public interface IResponse<TRequest>
     {
     }
 }

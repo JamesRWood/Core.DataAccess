@@ -1,7 +1,6 @@
 ﻿namespace Core.DataAccess.Installers
 {
     using Autofac;
-    using Core.DataAccess.Contracts.SessionToken;
     using FluentNHibernate.Cfg;
     using FluentNHibernate.Cfg.Db;
     using NHibernate;
@@ -11,30 +10,44 @@
 
     public class DatabaseInstaller : Autofac.Module
     {
-        public IDBToken DBToken { get; set; }
+        private readonly Assembly _assembly;
+        private readonly string _connectionString;
+        private readonly string _datatbaseName;
+        private readonly Type _dBTokenType;
+
+        public DatabaseInstaller(Assembly assembly, string connectionString, string databaseName, Type dBToken)
+        {
+            _assembly = assembly;
+            _connectionString = connectionString;
+            _datatbaseName = databaseName;
+            _dBTokenType = dBToken;
+        }
 
         protected override void Load(ContainerBuilder builder)
         {
-            if (DBToken == null)
+            if (string.IsNullOrEmpty(_connectionString))
             {
-                throw new NullReferenceException("DBToken is null");
+                throw new NullReferenceException("ConnectionString is null");
             }
 
-            var assembly = Assembly.GetCallingAssembly();
+            if (string.IsNullOrEmpty(_datatbaseName))
+            {
+                throw new NullReferenceException("DatabaseName is null");
+            }
 
-            builder.Register(c => BuildSessionFactory(DBToken.DatabaseName, assembly))
+            builder.Register(c => BuildSessionFactory(_connectionString, _datatbaseName, _assembly))
                    .As<ISessionFactory>()
                    .SingleInstance();
 
             builder.Register(c => c.Resolve<ISessionFactory>().OpenSession());
 
-            CommandQueryDataOperationInstaller.Install(builder, DBToken.GetType(), assembly);
+            CommandQueryDataOperationInstaller.Install(builder, _dBTokenType, _assembly);
         }
 
-        private static ISessionFactory BuildSessionFactory(string databaseName, Assembly assembly)
+        private static ISessionFactory BuildSessionFactory(string connectionString, string databaseName, Assembly assembly)
         {
             var config = MsSqlConfiguration.MsSql2012.Dialect<MsSql2012Dialect>()
-                                           .ConnectionString(@"Server=.;initial catalog=" + databaseName + @";Integrated Security=True;")
+                                           .ConnectionString(connectionString)
                                            .ShowSql();
 
             return Fluently.Configure()
