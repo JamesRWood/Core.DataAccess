@@ -11,10 +11,10 @@ namespace Core.DataAccess.Tests
         [Fact]
         public void CommandRegistration()
         {
-            var dataOperationHandler = Resolve<IDataOperationHandler<TestCommandRequest>>();
+            var dataOperationHandler = Resolve<ICommandOperationHandler<TestCommandRequest>>();
 
             var exception = Assert.Throws<Exception>(() => dataOperationHandler.ExecuteCommand(new TestCommandRequest()));
-            Assert.Equal("TestCommand ExecuteMethod resolved", exception.Message);
+            Assert.Equal("TestCommand Execute method resolved", exception.Message);
 
             ShutdownIoC();
         }
@@ -22,10 +22,17 @@ namespace Core.DataAccess.Tests
         [Fact]
         public void QueryRegistration()
         {
-            var dataOperationHandler = Resolve<IDataOperationHandler<TestQueryRequest>>();
+            var dataOperationHandler = Resolve<IQueryOperationHandler<TestQueryRequest, TestQueryResponse>>();
 
             var exception = Assert.Throws<Exception>(() => dataOperationHandler.ExecuteQuery(new TestQueryRequest()));
+            Assert.Equal("TestQuery Execute method resolved", exception.Message);
+
+            ShutdownIoC();
         }
+    }
+
+    public interface ITestDBToken : IDBToken
+    {
     }
 
     public class TestCommandRequest : ICommandRequest

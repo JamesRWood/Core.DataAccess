@@ -7,7 +7,8 @@
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterGeneric(typeof(DataOperationHandler<>)).As(typeof(IDataOperationHandler<>)).InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(CommandOperationHandler<>)).As(typeof(ICommandOperationHandler<>)).InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(QueryOperationHandler<,>)).As(typeof(IQueryOperationHandler<,>)).InstancePerLifetimeScope();
         }
     }
 }
