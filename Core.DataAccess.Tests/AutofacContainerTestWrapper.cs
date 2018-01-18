@@ -6,9 +6,9 @@ using System.Reflection;
 
 namespace Core.DataAccess.Tests
 {
-    public class AutofacContainerTestWrapper<TModule> where TModule : IModule, new()
+    public class AutofacContainerTestWrapper
     {
-        private IContainer _container;
+        private readonly IContainer _container;
 
         public AutofacContainerTestWrapper()
         {
@@ -16,7 +16,6 @@ namespace Core.DataAccess.Tests
 
             var assembly = Assembly.GetAssembly(GetType());
             builder.RegisterModule(new DatabaseInstaller(assembly, @"Server=.;initial catalog=DBName;Integrated Security=True;", "DBName", typeof(ITestDBToken)));
-            builder.RegisterModule(new TModule());
 
             _container = builder.Build();
         }
