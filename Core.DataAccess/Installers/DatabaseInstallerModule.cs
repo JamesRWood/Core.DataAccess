@@ -1,21 +1,21 @@
 ﻿namespace Core.DataAccess.Installers
 {
+    using System;
+    using System.Reflection;
     using Autofac;
     using FluentNHibernate.Cfg;
     using FluentNHibernate.Cfg.Db;
     using NHibernate;
     using NHibernate.Dialect;
-    using System;
-    using System.Reflection;
 
-    public class DatabaseInstaller : Autofac.Module
+    public class DatabaseInstallerModule : Autofac.Module
     {
         private readonly Assembly _assembly;
         private readonly string _connectionString;
         private readonly string _datatbaseName;
         private readonly Type _dBTokenType;
 
-        public DatabaseInstaller(Assembly assembly, string connectionString, string databaseName, Type dBToken)
+        public DatabaseInstallerModule(Assembly assembly, string connectionString, string databaseName, Type dBToken)
         {
             _assembly = assembly;
             _connectionString = connectionString;
@@ -41,7 +41,7 @@
 
             builder.Register(c => c.Resolve<ISessionFactory>().OpenSession());
 
-            CommandQueryDataOperationInstaller.Install(builder, _dBTokenType, _assembly);
+            DataOperationInstaller.Install(builder, _dBTokenType, _assembly);
         }
 
         private static ISessionFactory BuildSessionFactory(string connectionString, string databaseName, Assembly assembly)

@@ -1,12 +1,12 @@
 ﻿namespace Core.DataAccess.Installers
 {
-    using Autofac;
-    using Core.DataAccess.Contracts;
     using System;
     using System.Linq;
     using System.Reflection;
+    using Autofac;
+    using Core.DataAccess.Contracts;
 
-    public static class CommandQueryDataOperationInstaller
+    public static class DataOperationInstaller
     {
         public static void Install(ContainerBuilder builder, Type databaseType, Assembly assembly)
         {

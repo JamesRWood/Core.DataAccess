@@ -1,6 +1,6 @@
 ﻿namespace Core.DataAccess.Contracts
 {
-    public interface IDataOperation<in TRequest, out TResponse> where TRequest : IQueryRequest<IQueryResponse>
+    public interface IDataOperation<in TRequest, out TResponse> where TRequest : IQueryRequest<TResponse> where TResponse : IQueryResponse<TRequest>
     {
         TResponse Execute(TRequest request);
     }

@@ -1,12 +1,13 @@
-﻿using Autofac;
-using Autofac.Core;
-using Core.DataAccess.Contracts.SessionToken;
-using Core.DataAccess.Installers;
-using System.Reflection;
-
-namespace Core.DataAccess.Tests
+﻿namespace Core.DataAccess.Tests
 {
-    public class AutofacContainerTestWrapper
+    using System;
+    using System.Reflection;
+    using Autofac;
+    using Contracts;
+    using Core.DataAccess.Contracts.SessionToken;
+    using Core.DataAccess.Installers;
+
+    public class AutofacContainerTestWrapper : IDisposable
     {
         private readonly IContainer _container;
 
@@ -15,7 +16,7 @@ namespace Core.DataAccess.Tests
             var builder = new ContainerBuilder();
 
             var assembly = Assembly.GetAssembly(GetType());
-            builder.RegisterModule(new DatabaseInstaller(assembly, @"Server=.;initial catalog=DBName;Integrated Security=True;", "DBName", typeof(ITestDBToken)));
+            builder.RegisterModule(new DatabaseInstallerModule(assembly, @"Server=.;initial catalog=DBName;Integrated Security=True;", "DBName", typeof(ITestDbToken)));
 
             _container = builder.Build();
         }
@@ -25,9 +26,48 @@ namespace Core.DataAccess.Tests
             return _container.Resolve<TEntity>();
         }
 
-        protected void ShutdownIoC()
+        public void Dispose()
         {
             _container.Dispose();
+        }
+    }
+
+    public interface ITestDbToken : IDbToken
+    {
+    }
+
+    public interface IOtherTestDbToken : IDbToken
+    {
+    }
+
+    public class TestCommandRequest : ICommandRequest
+    {
+        public string RequestString { get; set; }
+    }
+
+    public class TestCommand : IDataOperation<TestCommandRequest>, ITestDbToken
+    {
+        public void Execute(TestCommandRequest request)
+        {
+            throw new Exception(request.RequestString);
+        }
+    }
+
+    public class TestQueryResponse : IQueryResponse<TestQueryRequest>
+    {
+        public string ResponseString { get; set; }
+    }
+
+    public class TestQueryRequest : IQueryRequest<TestQueryResponse>
+    {
+        public string RequestString { get; set; }
+    }
+
+    public class TestQuery : IDataOperation<TestQueryRequest, TestQueryResponse>, ITestDbToken
+    {
+        public TestQueryResponse Execute(TestQueryRequest request)
+        {
+            return new TestQueryResponse { ResponseString = request.RequestString };
         }
     }
 }
