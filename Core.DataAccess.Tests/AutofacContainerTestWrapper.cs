@@ -1,11 +1,14 @@
 ﻿namespace Core.DataAccess.Tests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using Autofac;
     using Contracts;
     using Core.DataAccess.Contracts.SessionToken;
     using Core.DataAccess.Installers;
+    using Microsoft.EntityFrameworkCore;
 
     public class AutofacContainerTestWrapper : IDisposable
     {
@@ -16,7 +19,12 @@
             var builder = new ContainerBuilder();
 
             var assembly = Assembly.GetAssembly(GetType());
-            builder.RegisterModule(new DatabaseInstallerModule(assembly, @"Server=.;initial catalog=DBName;Integrated Security=True;", "DBName", typeof(ITestDbToken)));
+            var entityList = new List<DbSet<IDbSet>>
+            {
+                new DatabaseEntity()
+            };
+
+            builder.RegisterModule(new DatabaseInstallerModule(assembly, @"Server=.;initial catalog=DBName;Integrated Security=True;", typeof(ITestDbContext), entityList));
 
             _container = builder.Build();
         }
@@ -63,11 +71,36 @@
         public string RequestString { get; set; }
     }
 
-    public class TestQuery : IDataOperation<TestQueryRequest, TestQueryResponse>, ITestDbToken
+    //public class TestQuery : IDataOperation<TestQueryRequest, TestQueryResponse>, ITestDbToken
+    //{
+    //    public TestQueryResponse Execute(TestQueryRequest request)
+    //    {
+    //        return new TestQueryResponse { ResponseString = request.RequestString };
+    //    }
+    //}
+
+    public class EfTestQuery : IDataOperation<TestQueryRequest, TestQueryResponse>
     {
+        private readonly ITestDbContext _dbContext;
+
+        public EfTestQuery(ITestDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         public TestQueryResponse Execute(TestQueryRequest request)
         {
+            var response = _dbContext.DatabaseEntities.FirstOrDefault(x => x.GetType() == typeof(DatabaseEntity));
             return new TestQueryResponse { ResponseString = request.RequestString };
         }
+    }
+
+    public class DatabaseEntity : DbSet<IDbSet>
+    {
+        public string Property => "ThisProperty";
+    }
+
+    public interface ITestDbContext : IDbContext
+    {
     }
 }

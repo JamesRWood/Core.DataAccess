@@ -20,19 +20,24 @@ namespace Core.DataAccess.Tests
         [Fact]
         public void CommandRegistration()
         {
-            var dataOperation = Resolve<IDataOperation<TestCommandRequest>>();
+            //var dataOperation = Resolve<IDataOperation<TestCommandRequest>>();
 
-            var exception = Assert.Throws<Exception>(() => dataOperation.Execute(new TestCommandRequest { RequestString = CommandRequestString }));
-            Assert.Equal(CommandRequestString, exception.Message);
-        }
-
-        [Fact]
-        public void EnsureQueryResolvedAsExpected()
-        {
             var dataOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
+            var dbContextImplementation = Resolve<ITestDbContext>();
 
-            Assert.IsAssignableFrom<TestQuery>(dataOperation);
+            var meh = dataOperation.Execute(new TestQueryRequest());
+
+            //var exception = Assert.Throws<Exception>(() => dataOperation.Execute(new TestCommandRequest { RequestString = CommandRequestString }));
+            //Assert.Equal(CommandRequestString, exception.Message);
         }
+
+        //[Fact]
+        //public void EnsureQueryResolvedAsExpected()
+        //{
+        //    var dataOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
+
+        //    Assert.IsAssignableFrom<TestQuery>(dataOperation);
+        //}
 
         [Fact]
         public void QueryRegistration()
