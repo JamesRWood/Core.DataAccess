@@ -1,15 +1,16 @@
 ﻿namespace Core.DataAccess.Tests
 {
-    using System.Collections.Generic;
+    using Contracts;
     using Microsoft.EntityFrameworkCore;
 
-    public class DbContextTestImplementation : DbContextBase<DbContextTestImplementation>, ITestDbContext
+    public class DbContextTestImplementation : DbContextBase, IDbContextTestImplementation
     {
         public DbContextTestImplementation(
-            IEnumerable<DbSet<IDbSet>> databaseEntities, 
             string connectionString)
-            : base(databaseEntities, connectionString)
+            : base(connectionString)
         {
         }
+
+        public DbSet<TestDatabaseEntity> TestDatabaseEntity { get; set; }
     }
 }

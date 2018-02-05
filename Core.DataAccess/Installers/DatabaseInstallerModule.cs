@@ -6,28 +6,20 @@
     using System.Reflection;
     using Autofac;
     using Autofac.Core;
-    using Microsoft.EntityFrameworkCore;
+    using Contracts;
+    using Contracts.SessionToken;
 
-    public class DatabaseInstallerModule : Autofac.Module
+    public class DatabaseInstallerModule<TDbContext, TDbToken> : Autofac.Module where TDbContext : IDbContext<TDbToken> where TDbToken : IDbToken
     {
         private readonly Assembly _assembly;
         private readonly string _connectionString;
-        //private readonly string _datatbaseName;
-        private readonly Type _dBTokenType;
-        private readonly IEnumerable<DbSet<IDbSet>> _databaseEntities;
 
         public DatabaseInstallerModule(
             Assembly assembly, 
-            string connectionString, 
-            //string databaseName, 
-            Type dBToken,
-            IEnumerable<DbSet<IDbSet>> databaseEntities)
+            string connectionString)
         {
             _assembly = assembly;
             _connectionString = connectionString;
-            //_datatbaseName = databaseName;
-            _dBTokenType = dBToken;
-            _databaseEntities = databaseEntities;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -37,50 +29,18 @@
                 throw new NullReferenceException("ConnectionString is null");
             }
 
-            //if (string.IsNullOrEmpty(_datatbaseName))
-            //{
-            //    throw new NullReferenceException("DatabaseName is null");
-            //}
-
             var parameters = new List<Parameter>
             {
-                new NamedParameter("databaseEntities", _databaseEntities),
                 new NamedParameter("connectionString", _connectionString)
             };
 
             builder.RegisterAssemblyTypes(_assembly)
-                   .Where(t => t.GetTypeInfo().ImplementedInterfaces.Any(i => i == _dBTokenType))
+                   .Where(t => t.GetTypeInfo().ImplementedInterfaces.Any(i => i == typeof(IDbContext<TDbToken>)))
                    .WithParameters(parameters)
                    .AsImplementedInterfaces()
                    .InstancePerLifetimeScope();
 
-            //builder.Register(c => BuildSessionFactory(_connectionString, _datatbaseName, _assembly))
-            //       .As<ISessionFactory>()
-            //       .SingleInstance();
-
-            //builder.Register(c => c.Resolve<ISessionFactory>().OpenSession());
-
-            DataOperationInstaller.Install(builder, _dBTokenType, _assembly);
+            DataOperationInstaller<TDbContext, TDbToken>.Install(builder, _assembly);
         }
-
-        //private static ISessionFactory BuildSessionFactory(string connectionString, string databaseName, Assembly assembly)
-        //{
-        //    //var config = MsSqlConfiguration.MsSql2012.Dialect<MsSql2012Dialect>()
-        //    //                               .ConnectionString(connectionString)
-        //    //                               .ShowSql();
-
-        //    //return Fluently.Configure()
-        //    //               .Database(config)
-        //    //               .ExposeConfiguration(
-        //    //                    cfg =>
-        //    //                    {
-        //    //                        cfg.SetProperty(NHibernate.Cfg.Environment.SessionFactoryName, databaseName);
-        //    //                        cfg.SetProperty(NHibernate.Cfg.Environment.Isolation, "ReadCommitted");
-        //    //                        cfg.SetProperty(NHibernate.Cfg.Environment.Hbm2ddlKeyWords, "none");
-        //    //                        cfg.SetProperty(NHibernate.Cfg.Environment.GenerateStatistics, "true");
-        //    //                    })
-        //    //               .Mappings(m => m.FluentMappings.AddFromAssembly(assembly))
-        //    //               .BuildSessionFactory();
-        //}
     }
 }

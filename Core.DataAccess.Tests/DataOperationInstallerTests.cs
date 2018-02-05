@@ -20,12 +20,12 @@ namespace Core.DataAccess.Tests
         [Fact]
         public void CommandRegistration()
         {
-            //var dataOperation = Resolve<IDataOperation<TestCommandRequest>>();
+            var commandOperation = Resolve<IDataOperation<TestCommandRequest>>();
 
-            var dataOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
-            var dbContextImplementation = Resolve<ITestDbContext>();
+            var queryOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
+            //var dbContextImplementation = Resolve<ITestDbContext>();
 
-            var meh = dataOperation.Execute(new TestQueryRequest());
+            var meh = queryOperation.Execute(new TestQueryRequest());
 
             //var exception = Assert.Throws<Exception>(() => dataOperation.Execute(new TestCommandRequest { RequestString = CommandRequestString }));
             //Assert.Equal(CommandRequestString, exception.Message);
