@@ -1,4 +1,4 @@
-﻿namespace Core.DataAccess.Tests
+﻿namespace Core.DataAccess.Tests.TestImplementation
 {
     using Contracts;
     using Microsoft.EntityFrameworkCore;

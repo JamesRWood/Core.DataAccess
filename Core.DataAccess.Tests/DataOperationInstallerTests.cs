@@ -2,6 +2,8 @@ namespace Core.DataAccess.Tests
 {
     using System;
     using Core.DataAccess.Contracts;
+    using TestImplementation.TestCommand;
+    using TestImplementation.TestQuery;
     using Xunit;
 
     public class DataOperationInstallerTests : AutofacContainerTestWrapper
@@ -20,24 +22,19 @@ namespace Core.DataAccess.Tests
         [Fact]
         public void CommandRegistration()
         {
-            var commandOperation = Resolve<IDataOperation<TestCommandRequest>>();
+            var dataOperation = Resolve<IDataOperation<TestCommandRequest>>();
 
-            var queryOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
-            //var dbContextImplementation = Resolve<ITestDbContext>();
-
-            var meh = queryOperation.Execute(new TestQueryRequest());
-
-            //var exception = Assert.Throws<Exception>(() => dataOperation.Execute(new TestCommandRequest { RequestString = CommandRequestString }));
-            //Assert.Equal(CommandRequestString, exception.Message);
+            var exception = Assert.Throws<Exception>(() => dataOperation.Execute(new TestCommandRequest { RequestString = CommandRequestString }));
+            Assert.Equal(CommandRequestString, exception.Message);
         }
 
-        //[Fact]
-        //public void EnsureQueryResolvedAsExpected()
-        //{
-        //    var dataOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
+        [Fact]
+        public void EnsureQueryResolvedAsExpected()
+        {
+            var dataOperation = Resolve<IDataOperation<TestQueryRequest, TestQueryResponse>>();
 
-        //    Assert.IsAssignableFrom<TestQuery>(dataOperation);
-        //}
+            Assert.IsAssignableFrom<TestQuery>(dataOperation);
+        }
 
         [Fact]
         public void QueryRegistration()
