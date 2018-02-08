@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hades.DataAccess\Hades.DataAccess.csproj" />
+    <ProjectReference Include="..\Hades.DataAccess\Hades.EFC.csproj" />
   </ItemGroup>
 
 </Project>

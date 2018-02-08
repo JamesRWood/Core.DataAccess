@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hades.DataAccess", "Hades.DataAccess\Hades.DataAccess.csproj", "{B830039B-282F-455E-9B03-EFF3C36DE6FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hades.EFC", "Hades.DataAccess\Hades.EFC.csproj", "{B830039B-282F-455E-9B03-EFF3C36DE6FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hades.DataAccess.Tests", "Hades.DataAccess.Tests\Hades.DataAccess.Tests.csproj", "{8F735821-B070-4AF9-957F-96111A9C41AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hades.EFC.Tests", "Hades.DataAccess.Tests\Hades.EFC.Tests.csproj", "{8F735821-B070-4AF9-957F-96111A9C41AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
